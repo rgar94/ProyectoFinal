@@ -1,0 +1,13 @@
+﻿  figuras.cpp
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(20): warning C4838: la conversión de 'double' en 'GLfloat' requiere una conversión de restricción
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(84): warning C4838: la conversión de 'double' en 'GLfloat' requiere una conversión de restricción
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(132): warning C4838: la conversión de 'double' en 'GLfloat' requiere una conversión de restricción
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(186): warning C4838: la conversión de 'double' en 'GLfloat' requiere una conversión de restricción
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(252): warning C4838: la conversión de 'double' en 'GLfloat' requiere una conversión de restricción
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(317): warning C4838: la conversión de 'double' en 'GLfloat' requiere una conversión de restricción
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(473): warning C4101: 'theta': variable local sin referencia
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(473): warning C4101: 'phi': variable local sin referencia
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(528): warning C4101: 'theta': variable local sin referencia
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(528): warning C4101: 'phi': variable local sin referencia
+c:\users\rgar9\onedrive\documentos\visual studio 2017\projects\proyecto final\proyecto final\figuras.cpp(871): warning C4838: la conversión de 'double' en 'GLfloat' requiere una conversión de restricción
+  Proyecto Final.vcxproj -> C:\Users\rgar9\OneDrive\Documentos\Visual Studio 2017\Projects\Proyecto Final\Debug\Proyecto Final.exe
