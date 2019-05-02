@@ -41,6 +41,7 @@ CTexture pared;
 CTexture pared2;
 CTexture raton;
 CTexture escritorio;
+CTexture suelo_estacionamiento;
 
 //Definicion de figuras
 CFiguras sky;
@@ -102,9 +103,13 @@ void InitGL(GLvoid)     // Inicializamos parametros
 	tree1.BuildGLTexture();
 	tree1.ReleaseImage();
 
-	suelo.LoadTGA("text/suelo.tga");
+	suelo.LoadTGA("text/concreto.tga");
 	suelo.BuildGLTexture();
 	suelo.ReleaseImage();
+
+	suelo_estacionamiento.LoadTGA("text/estacionamiento.tga");
+	suelo_estacionamiento.BuildGLTexture();
+	suelo_estacionamiento.ReleaseImage();
 
 	pasto.LoadTGA("text/pasto01.tga");
 	pasto.BuildGLTexture();
@@ -162,14 +167,36 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glPushMatrix();
 	glPushMatrix(); //Creamos cielo
 	glDisable(GL_LIGHTING);
-	glTranslatef(0, 60, 0);
-	sky.skybox(150.0, 150.0, 150.0, text1.GLindex);
+
+	glPushMatrix();
+	glTranslatef(0, 200, 0);
+	sky.skybox(400.0, 400.0, 400.0, text1.GLindex);
+
+	glPopMatrix();
 	glEnable(GL_LIGHTING);
 	glColor3f(1.0, 1.0, 1.0);
 	glPopMatrix();
 	glPushMatrix();
 	glDisable(GL_LIGHTING);
-	piso.prisma(0.5, 150.0, 150.0, suelo.GLindex);
+
+	//suelo del parque en general
+	glPushMatrix();
+	glTranslatef(0,0,-50);
+	piso.prisma(0.5, 400.0, 300.0, suelo.GLindex);
+	glPopMatrix();	
+
+	//suelo estacionamiento
+	glPushMatrix();
+	glTranslatef(0, 0, 150);
+	piso.prisma(0.5, 400.0, 100.0, suelo_estacionamiento.GLindex);
+	glPopMatrix();
+
+	//Entrada al parque
+
+	
+
+	
+
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
 
@@ -517,473 +544,12 @@ void display(void)   // Creamos la funcion donde se dibuja
 	arbol2.arbol(tree1.GLindex);
 	glPopMatrix();
 
-	glPushMatrix();//medias lunas
-	glDisable(GL_LIGHTING);
-	glTranslatef(10.0, 0.0, 10.0);
-	cuartode.cuarto(27.5, 5.0, 30.0, pasto.GLindex, ladrillo.GLindex);
-	glBegin(GL_POLYGON);  //derecha
-	glTexCoord2f(0.3f, 0.3f); glVertex3f(0.0, 5.0, 0.0);
-	glTexCoord2f(0.3f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 27.5);
-	glTexCoord2f(0.0f, 0.3f); glVertex3f(0.0, 5.0, 27.5);
-	glEnd();
-	glTranslatef(-10.0, 0.0, 0.0);
-	glPushMatrix();
-	glRotatef(270, 0.0, 1.0, 0.0);
-	cuartode.cuarto(27.5, 5.0, 30.0, pasto.GLindex, ladrillo.GLindex);
-	glPopMatrix();
-	glBegin(GL_POLYGON);  //izquierda
-	glTexCoord2f(0.3f, 0.3f); glVertex3f(0.0, 5.0, 10.0);
-	glTexCoord2f(0.3f, 0.0f); glVertex3f(0.0, 0.0, 10.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 37.5);
-	glTexCoord2f(0.0f, 0.3f); glVertex3f(0.0, 5.0, 37.5);
-	glEnd();
+
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
 
 
-	glPushMatrix();//Parte trasera
-	glDisable(GL_LIGHTING);
-	glTranslatef(23.75, 0.0, -10.0);
-	cuartode.prisma5(10.0, 27.5, 40, ladrillo.GLindex);
-	glTranslatef(-37.75, 0.0, 0.0);
-	cuartode.prisma5(10.0, 27.5, 40, ladrillo.GLindex);
-	glPopMatrix();
-	glPushMatrix();//escalones
-	glTranslatef(4.75, 0.0, -30.0);
-	escalon1.prisma3(2.0, 10.0, 3.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, 3.0);
-	escalon2.prisma3(2.0, 10.0, 3.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, 3.0);
-	escalon3.prisma3(2.0, 10.0, 3.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, 3.0);
-	escalon4.prisma3(2.0, 10.0, 3.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, 6.0);
-	escalon5.prisma3(2.0, 10.0, 8.5, scale.GLindex);
-	glPopMatrix();
-
-	glPushMatrix();//Entrada
-	glTranslatef(4.75, 12.5,-0.0);
-	escalon5.prisma4(15.0, 10.5, 22.0, pared.GLindex);
-
-	glBindTexture(GL_TEXTURE_2D, pared2.GLindex);   // choose the texture to use.
-
-
-	glBegin(GL_POLYGON);  //Derecha
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(5.25,7.5,11.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(5.25, -7.5, 11.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(5.25, -7.5, -2.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(5.25, 7.5, -2.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(5.25, 7.5, -2.0);
-	glTexCoord2f(0.0f, 0.5f); glVertex3f(5.25, 0.0, -2.0);
-	glTexCoord2f(0.5f, 0.5f); glVertex3f(5.25, 0.0, -6.0);
-	glTexCoord2f(0.5f, 0.0f); glVertex3f(5.25, 7.5, -6.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(5.25, 7.5, -11.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(5.25, -7.5, -11.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(5.25, -7.5, -6.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(5.25, 7.5, -6.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Atras
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.75, -7.5, -11.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.75, 7.5, -11.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(5.25, 7.5, -11.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(5.25, -7.5, -11.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.75, 7.5, -11.0);
-	glTexCoord2f(0.0f, 0.5f); glVertex3f(1.75, 0.0, -11.0);
-	glTexCoord2f(0.5f, 0.5f); glVertex3f(-1.75, 0.0, -11.0);
-	glTexCoord2f(0.5f, 0.0f); glVertex3f(-1.75, 7.5, -11.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.75, 7.5, -11.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.75, -7.5, -11.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-5.25, -7.5, -11.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-5.25, 7.5, -11.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Izquierda
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-5.25, 7.5, 11.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-5.25, -7.5, 11.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-5.25, -7.5, -2.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-5.25, 7.5, -2.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-5.25, 7.5, -2.0);
-	glTexCoord2f(0.0f, 0.5f); glVertex3f(-5.25, 0.0, -2.0);
-	glTexCoord2f(0.5f, 0.5f); glVertex3f(-5.25, 0.0, -6.0);
-	glTexCoord2f(0.5f, 0.0f); glVertex3f(-5.25, 7.5, -6.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-5.25, 7.5, -11.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-5.25, -7.5, -11.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-5.25, -7.5, -6.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-5.25, 7.5, -6.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Adelante
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.75, -7.5, 11.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.75, 7.5, 11.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(5.25, 7.5, 11.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(5.25, -7.5, 11.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.75, 7.5, 11.0);
-	glTexCoord2f(0.0f, 0.5f); glVertex3f(1.75, 0.0, 11.0);
-	glTexCoord2f(0.5f, 0.5f); glVertex3f(-1.75, 0.0, 11.0);
-	glTexCoord2f(0.5f, 0.0f); glVertex3f(-1.75, 7.5, 11.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.75, 7.5, 11.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.75, -7.5, 11.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-5.25, -7.5, 11.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-5.25, 7.5, 11.0);
-	glEnd();
-	glPopMatrix();	
-		glPushMatrix();
-	glTranslatef(4.75, 22.5, -0.0);
-	escalon5.prisma5(5.0, 10.5, 22.0, pared2.GLindex);
-
-	glPopMatrix();
-
-	glPushMatrix();//Ala este
-	glPushMatrix();
-	glTranslatef(-14.25, 42.5, -9.5);
-
-	escalon5.prisma4(75.0, 27.5, 41, pared.GLindex);
-	glPopMatrix();
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //piso1
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(-8, 20.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(-28, 20.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-28, 20.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-8, 20.0, 11.0);
-	glEnd();
-	glTranslatef(-20.0, 7.0, 0.0);
-	desk.desk(escritorio.GLindex);
-	glPopMatrix();
-
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //piso2
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(-8, 35.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(-28, 35.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-28, 35.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-8, 35.0, 11.0);
-	glEnd();
-	glPopMatrix();
-
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //piso3
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(-8, 50.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(-28, 50.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-28, 50.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-8, 50.0, 11.0);
-	glEnd();
-	glPopMatrix();
-
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //piso4
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(-8, 65.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(-28, 65.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-28, 65.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-8, 65.0, 11.0);
-	glEnd();
-	glPopMatrix();
-	glPushMatrix();//escalones
-	glTranslatef(-2.0, 5.0, -15.0);
-	escalon1.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon2.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon4.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(-3.0, 2.0, -4.0);
-	escalon5.prisma3(2.0, 6.0, -8.0, scale.GLindex);
-	glTranslatef(0.0, 0.0, 12.0);
-	escalon5.prisma3(2.0, 6.0, -8.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon2.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon4.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -4.0);
-	escalon5.prisma3(2.0, 6.0, -8.0, scale.GLindex);
-
-	glTranslatef(0.0, 0.0, 12.0);
-	escalon5.prisma3(2.0, 6.0, -8.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon2.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon4.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -4.0);
-	escalon5.prisma3(2.0, 6.0, -8.0, scale.GLindex);
-
-	glTranslatef(0.0, 0.0, 12.0);
-	escalon5.prisma3(2.0, 6.0, -8.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon2.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon4.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -4.0);
-	escalon5.prisma3(2.0, 6.0, -8.0, scale.GLindex);
-	glPopMatrix();
-	glBindTexture(GL_TEXTURE_2D, pared2.GLindex);   // choose the texture to use.
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //Derecha
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(-0.5, 25.0, 11.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(-0.5, 80.0, 11.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5, 80.0, -11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-0.5, 25.0, -11.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5, 5.0, -11.0);
-	glTexCoord2f(0.0f, 5.0f); glVertex3f(-0.5, 80.0, -11.0);
-	glTexCoord2f(5.0f, 5.0f); glVertex3f(-0.5, 80.0, -30.0);
-	glTexCoord2f(5.0f, 0.0f); glVertex3f(-0.5, 5.0, -30.0);
-	glEnd();
 	
-	glBegin(GL_POLYGON);  //Atras
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(-0.5, 5.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(-0.5, 80.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-28, 80.0, -30.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-28, 5.0, -30.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Adelante
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(-0.5, 5.0, 11.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(-0.5, 80.0, 11.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-28, 80.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-28, 5.0, 11.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Izquiera
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(-28, 5.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(-28, 80.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-28, 80.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-28, 5.0, 11.0);
-	glEnd();
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-14.25, 82.5, -9.5);
-	escalon5.prisma5(5.0, 27.5, 41, pared2.GLindex);
-	glPopMatrix();
-
-	glPushMatrix();//Ala Oeste
-	glPushMatrix();
-	glTranslatef(23.75, 42.5, -9.5);
-	escalon5.prisma4(75.0, 27.5, 41, pared.GLindex);
-	glPopMatrix();
-
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //piso1
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(10, 20.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(28, 20.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(28, 20.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(10, 20.0, 11.0);
-	glEnd();
-	
-	glPopMatrix();
-
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //piso2
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(10, 35.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(28, 35.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(28, 35.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(10, 35.0, 11.0);
-	glEnd();
-	glPopMatrix();
-
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //piso3
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(10, 50.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(28, 50.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(28, 50.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(10, 50.0, 11.0);
-	glEnd();
-	glPopMatrix();
-
-	glPushMatrix();
-	glBegin(GL_POLYGON);  //piso4
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(10, 65.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(28, 65.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(28, 65.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(10, 65.0, 11.0);
-	glEnd();
-	glPopMatrix();
-
-	glPushMatrix();//escalones
-	glTranslatef(32.0, 5.0, -15.0);
-	escalon1.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon2.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon4.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -4.0);
-	escalon5.prisma3(2.0, 8.0, -8.0, scale.GLindex);
-
-
-	glTranslatef(0.0, 0.0, 12.0);
-	escalon5.prisma3(2.0, 8.0, -8.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon2.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon4.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -4.0);
-	escalon5.prisma3(2.0, 8.0, -8.0, scale.GLindex);
-
-
-	glTranslatef(0.0, 0.0, 12.0);
-	escalon5.prisma3(2.0, 8.0, -8.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon2.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon4.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -4.0);
-	escalon5.prisma3(2.0, 8.0, -8.0, scale.GLindex);
-
-
-	glTranslatef(0.0, 0.0, 12.0);
-	escalon5.prisma3(2.0, 8.0, -8.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon2.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 1.0, -1.0);
-	escalon3.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -1.0);
-	escalon4.prisma3(2.0, 2.0, 1.0, scale.GLindex);
-	glTranslatef(0.0, 2.0, -4.0);
-	escalon5.prisma3(2.0, 8.0, -8.0, scale.GLindex);
-
-
-
-	glPopMatrix();
-	glBindTexture(GL_TEXTURE_2D, pared2.GLindex);   // choose the texture to use.
-	glPushMatrix();
-	glTranslatef(9.5,0.0,0.0);
-	glBegin(GL_POLYGON);  //izquierda
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(0.5, 25.0, 11.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(0.5, 80.0, 11.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.5, 80.0, -11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(0.5, 25.0, -11.0);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.5, 5.0, -11.0);
-	glTexCoord2f(0.0f, 5.0f); glVertex3f(0.5, 80.0, -11.0);
-	glTexCoord2f(5.0f, 5.0f); glVertex3f(0.5, 80.0, -30.0);
-	glTexCoord2f(5.0f, 0.0f); glVertex3f(0.5, 5.0, -30.0);
-	glEnd();
-
-	glBegin(GL_POLYGON);  //Atras
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(0.5, 5.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(0.5, 80.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(28, 80.0, -30.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(28, 5.0, -30.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Adelante
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(0.5, 5.0, 11.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(0.5, 80.0, 11.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(28, 80.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(28, 5.0, 11.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Derecha
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(28, 5.0, -30.0);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(28, 80.0, -30.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(28, 80.0, 11.0);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(28, 5.0, 11.0);
-	glEnd();
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(23.75, 82.5, -9.5);
-	escalon5.prisma5(5.0, 27.5, 41, pared2.GLindex);
-	glPopMatrix();
-
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
 
@@ -1012,7 +578,7 @@ void reshape(int width, int height)   // Creamos funcion Reshape
 
 	// Tipo de Vista
 
-	glFrustum(-0.1, 0.1, -0.1, 0.1, 0.1, 170.0);
+	glFrustum(-0.1, 0.1, -0.1, 0.1, 0.1, 700.0);
 
 	glMatrixMode(GL_MODELVIEW);							// Seleccionamos Modelview Matrix
 	glLoadIdentity();
