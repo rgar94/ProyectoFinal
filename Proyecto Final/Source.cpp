@@ -1,9 +1,10 @@
 //Computación Gráfica
 //Proyecto Final
-//Semestre 2019 - 1
-//Fecha: 12/11/2018
-//Alumno: García Callejas Ricardo
-//Grupo Teoria:04 Grupo Laboratorio: 09
+//Semestre 2019 - 2
+//Fecha: 08/05/2019
+//Alumnos: García Callejas Ricardo
+//		   Ramírez Verduzco Lizet
+//Grupo Teoria: 01 Grupo Laboratorio: 02
 
 #include "texture.h"
 #include "figuras.h"
@@ -42,6 +43,11 @@ CTexture pared2;
 CTexture raton;
 CTexture escritorio;
 CTexture suelo_estacionamiento;
+CTexture madera;
+CTexture puesto_azul;
+CTexture puesto_rojo;
+CTexture puesto_amarillo;
+CTexture castillo_negro;
 
 //Definicion de figuras
 CFiguras sky;
@@ -69,6 +75,11 @@ CFiguras escalon4;
 CFiguras escalon5;
 CFiguras mouse;
 CFiguras desk;
+CFiguras entrada;
+CFiguras puesto;
+CFiguras patas_asiento;//para las bancas del parque
+CFiguras asiento;
+CFiguras castillo;
 
 
 
@@ -143,6 +154,25 @@ void InitGL(GLvoid)     // Inicializamos parametros
 	escritorio.BuildGLTexture();
 	escritorio.ReleaseImage();
 
+	madera.LoadTGA("text/madera.tga");
+	madera.BuildGLTexture();
+	madera.ReleaseImage();
+
+	puesto_azul.LoadTGA("text/puesto_azul.tga");
+	puesto_azul.BuildGLTexture();
+	puesto_azul.ReleaseImage();
+
+	puesto_rojo.LoadTGA("text/puesto_rojo.tga");
+	puesto_rojo.BuildGLTexture();
+	puesto_rojo.ReleaseImage();
+
+	puesto_amarillo.LoadTGA("text/puesto_amarillo.tga");
+	puesto_amarillo.BuildGLTexture();
+	puesto_amarillo.ReleaseImage();
+
+	castillo_negro.LoadTGA("text/castillo_negro.tga");
+	castillo_negro.BuildGLTexture();
+	castillo_negro.ReleaseImage();
 
 	objCamera.Position_Camera(10, 10.5f, 0, 0, 2.5f, 0, 0, 1, 0);
 
@@ -181,9 +211,9 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 	//suelo del parque en general
 	glPushMatrix();
-	glTranslatef(0,0,-50);
+	glTranslatef(0, 0, -50);
 	piso.prisma(0.5, 400.0, 300.0, suelo.GLindex);
-	glPopMatrix();	
+	glPopMatrix();
 
 	//suelo estacionamiento
 	glPushMatrix();
@@ -192,48 +222,36 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glPopMatrix();
 
 	//Entrada al parque
-
-	
-
-	
-
-	glEnable(GL_LIGHTING);
-	glPopMatrix();
-
 	glPushMatrix();
-	glTranslatef(17.0, 0.0, 65.0);
-	glDisable(GL_LIGHTING);
-	jardinera1_1.maceta(10.0, 10.0, 7.5, pasto.GLindex, ladrillo.GLindex);//maceta1
-	glTranslatef(-5.0, 0.0, 0.0);
-	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(10.0, 0.0, 3.75);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(11.5, 0.0, 3.75);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(11.5, 5, 3.75);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(10.0, 5, 3.75);
-	glEnd();
-	glBegin(GL_POLYGON);  //Left
-		//glColor3f(1.0,1.0,1.0);
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(11.5, 5, 3.75);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(11.5, 0.0, 3.75);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(10.0, 0.0, -3.75);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(10.0, 5, -3.75);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(10.0, 5, 3.75);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(11.5, 5, 3.75);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(10.0, 5, -3.75);
-	glEnd();
-	glEnable(GL_LIGHTING);
+	glTranslatef(0, 90, 107.5);
+	entrada.prisma(20, 150, 15, scale.GLindex);
+
+	//columna 1
+	glTranslatef(90, -40, 0);
+	entrada.prisma(100, 30, 15, scale.GLindex);
+
+	//columna 2
+	glTranslatef(-180, 0, 0);
+	entrada.prisma(100, 30, 15, scale.GLindex);
+
+	//Barda 1
+	glTranslatef(-62.5, -25, 0);
+	entrada.prisma(50, 95, 15, scale.GLindex);
+
+	//Barda 
+	glTranslatef(305, 0, 0);
+	entrada.prisma(50, 95, 15, scale.GLindex);
+	glPopMatrix();
 	glPopMatrix();
 
-	glDisable(GL_LIGHTING);
-	glPushMatrix();//Faro1
-	glTranslatef(25.0, 0.0, 67.0);
+	/////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////
+	//DIBUJO DE BANQUITAS, PUESTOS Y DEMAS, LADO IZQUIERDO//
+	///////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
+
+	glPushMatrix();//Faro1 
+	glTranslatef(-180.0, 0.0, 90.0);
 	glColor3fv(gris);
 	posteinf.poste(0.1, 20, 40, 0);
 	glTranslatef(0.0, 20.0, 0.0);
@@ -244,6 +262,492 @@ void display(void)   // Creamos la funcion donde se dibuja
 	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
 	glColor3f(1.0, 1.0, 1.0);
 	glPopMatrix();
+
+	glPushMatrix();//Faro2 
+	glTranslatef(-180.0, 0.0, 10.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro3
+	glTranslatef(-180.0, 0.0, -40.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	//Jardinera 1 (Entrada izquierda)
+	glPushMatrix();
+	glTranslatef(-180.0, 0.0, 60.0);
+	glDisable(GL_LIGHTING);
+	jardinera1_1.maceta(10.0, 15.0, 41.0, pasto.GLindex, ladrillo.GLindex);
+	glTranslatef(7.5, 0.0, 20.5);
+	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
+
+	glBegin(GL_POLYGON);	//Front
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(5, 0.0, -14.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(5, 5.0, -14.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+
+	glBegin(GL_POLYGON);  //Left
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(5.0, 5.0, -14.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(5.0, 0.0, -14.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 0.0, -41.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, -41.0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
+
+	glBegin(GL_POLYGON);  //Top
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 5.0, -41.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(5.0, 5.0, -14.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glTranslatef(-7.5, 0.0, -20.5);
+	arbol2.arbol(tree.GLindex);
+	glPopMatrix();
+	
+
+	//Banquitas
+
+	//banquita pegada a la jardinera izquierda
+	glPushMatrix();
+	glTranslatef(-180, 2, 20);
+	glRotatef(90, 0, 1, 0);
+	asiento.prisma(1, 15, 3, madera.GLindex);
+
+	glTranslatef(6,-0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glTranslatef(-12,-0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+	glPopMatrix();
+
+	//banquita pegada al puesto amarillo lado izquierdo
+	glPushMatrix();
+	glTranslatef(-180, 2, -50);
+	glRotatef(90, 0, 1, 0);
+	asiento.prisma(1, 15, 3, madera.GLindex);
+
+	glTranslatef(6, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glTranslatef(-12, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+	glPopMatrix();
+
+	//puestos
+
+	//puesto 1 
+	glPushMatrix();
+	glTranslatef(-180,0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//puesto 2 
+	glPushMatrix();
+	glTranslatef(-180, 0, -15);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(10, 10, 5, puesto_rojo.GLindex);
+	glPopMatrix();
+
+
+	//puesto 3 
+	glPushMatrix();
+	glTranslatef(-180, 0, -30);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
+
+	///////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
+	//DIBUJO DE BANQUITAS, PUESTOS Y DEMAS, LADO DERECHO//
+	//////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////
+
+	//Jardinera 1 (Entrada derecha)
+	glPushMatrix();
+	glTranslatef(180.0, 0.0, 60.0);
+	glDisable(GL_LIGHTING);
+	jardinera1_1.maceta(10.0, 15.0, 41.0, pasto.GLindex, ladrillo.GLindex);
+	glTranslatef(7.5, 0.0, 20.5);
+	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
+
+	glBegin(GL_POLYGON);	//Front
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(5, 0.0, -14.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(5, 5.0, -14.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+
+	glBegin(GL_POLYGON);  //Left
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(5.0, 5.0, -14.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(5.0, 0.0, -14.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 0.0, -41.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, -41.0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
+
+	glBegin(GL_POLYGON);  //Top
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 5.0, -41.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(5.0, 5.0, -14.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glTranslatef(-7.5, 0.0, -20.5);
+	arbol2.arbol(tree.GLindex);
+	glPopMatrix();
+
+	//Banquitas
+
+	//banquita pegada a la jardinera izquierda
+	glPushMatrix();
+	glTranslatef(180, 2, 20);
+	glRotatef(90, 0, 1, 0);
+	asiento.prisma(1, 15, 3, madera.GLindex);
+
+	glTranslatef(6, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glTranslatef(-12, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+	glPopMatrix();
+
+
+
+	//Castillo
+	glPushMatrix();
+	glTranslatef(180, 0, -45);
+	glRotatef(90, 0, 1, 0);
+	castillo.prisma(130, 100 , 40, castillo_negro.GLindex);
+	//torre 1 centro
+	glTranslatef(0,65,0);
+	castillo.poste(8.0, 45.0, 120.0,castillo_negro.GLindex);
+	//torre 2 izquierda
+	glTranslatef(40,0,0);
+	castillo.poste(8.0, 30.0, 120.0, castillo_negro.GLindex);
+	//torre 3 derecha
+	glTranslatef(-80,0, 0);
+	castillo.poste(8.0, 30.0, 120.0, castillo_negro.GLindex);
+	glPopMatrix();
+
+	//picos de las torres
+	glPushMatrix();
+	//torre 2 izquierda
+	glTranslatef(180, 95, -5);
+	glColor3f(0,0,0);
+	castillo.cono(30,8, 120, castillo_negro.GLindex);
+	//torre 3 derecha
+	glTranslatef(0,0, -80);
+	glColor3f(0, 0, 0);
+	castillo.cono(30, 8, 120, castillo_negro.GLindex);
+	//torre 1 centro
+	glTranslatef(0, 15,40);
+	glColor3f(0, 0, 0);
+	castillo.cono(30, 8, 120, castillo_negro.GLindex);
+	glPopMatrix();
+	
+
+
+	glPushMatrix();//Faro1 
+	glTranslatef(180.0, 0.0, 90.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+
+
+	glPushMatrix();//Faro2 pegado al castillo
+	glTranslatef(180.0, 0.0, 10.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro3
+	glTranslatef(180.0, 0.0, -120.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+//////////////DIBUJO JARDINERAS DEL FONDO//////////////
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+
+	//Jardinera pegada al lado izquierdo
+	glPushMatrix();
+	glTranslatef(-170, 0.0, -190);
+	glRotatef(-90, 0.0, 1.0, 0.0);
+	glDisable(GL_LIGHTING);
+	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);
+	glTranslatef(0.0, 0.0, 15.0);
+	medialuna.cilindro(7.5, 5.0, 30.0, pasto.GLindex, ladrillo.GLindex);
+	glTranslatef(7.5, 0.0, -30);
+	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
+	glBegin(GL_POLYGON);	//Front
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15, 0.0, -15.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15, 5.0, -15.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glBegin(GL_POLYGON);  //Left
+		//glColor3f(1.0,1.0,1.0);
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 0.0, -15.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15.0, 0.0, 0.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-15.0, 5.0, 0.0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
+	glBegin(GL_POLYGON);  //Top
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 5.0, 0.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glTranslatef(-7.5, 0.0, 30.0);
+	arbol2.arbol(tree1.GLindex);
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
+	//banquita pegada a la jardinera izquierda
+	glPushMatrix();
+
+	glTranslatef(-120, 2, -190);
+	glRotatef(180, 0, 1, 0);
+	asiento.prisma(1, 15, 3, madera.GLindex);
+
+	glTranslatef(6, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glTranslatef(-12, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glPopMatrix();
+
+	//banquita 
+	glPushMatrix();
+	
+	glTranslatef(-100, 2, -190);
+	glRotatef(180, 0, 1, 0);
+	asiento.prisma(1, 15, 3, madera.GLindex);
+
+	glTranslatef(6, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glTranslatef(-12, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+	
+	glPopMatrix();
+
+	//jardinera 2
+	glPushMatrix();
+	glTranslatef(-55, 0.0, -190);
+	glRotatef(-270, 0.0, 1.0, 0.0);
+	glDisable(GL_LIGHTING);
+	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);//maceta8
+	glTranslatef(0.0, 0.0, 15.0);
+	medialuna.cilindro(7.5, 5.0, 30.0, pasto.GLindex, ladrillo.GLindex);
+	glTranslatef(7.5, 0.0, -30);
+	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
+	glBegin(GL_POLYGON);	//Front
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15, 0.0, -15.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15, 5.0, -15.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glBegin(GL_POLYGON);  //Left
+		//glColor3f(1.0,1.0,1.0);
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 0.0, -15.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15.0, 0.0, 0.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-15.0, 5.0, 0.0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
+	glBegin(GL_POLYGON);  //Top
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 5.0, 0.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glTranslatef(-7.5, 0.0, 30.0);
+	arbol2.arbol(tree1.GLindex);
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
+
+
+
+
+	//segundo bloque
+	//Jardinera pegada al lado izquierdo
+	glPushMatrix();
+	glTranslatef(55, 0.0, -190);
+	glRotatef(-90, 0.0, 1.0, 0.0);
+	glDisable(GL_LIGHTING);
+	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);
+	glTranslatef(0.0, 0.0, 15.0);
+	medialuna.cilindro(7.5, 5.0, 30.0, pasto.GLindex, ladrillo.GLindex);
+	glTranslatef(7.5, 0.0, -30);
+	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
+	glBegin(GL_POLYGON);	//Front
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15, 0.0, -15.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15, 5.0, -15.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glBegin(GL_POLYGON);  //Left
+		//glColor3f(1.0,1.0,1.0);
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 0.0, -15.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15.0, 0.0, 0.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-15.0, 5.0, 0.0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
+	glBegin(GL_POLYGON);  //Top
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 5.0, 0.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glTranslatef(-7.5, 0.0, 30.0);
+	arbol2.arbol(tree1.GLindex);
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
+
+	//banquita pegada a la jardinera izquierda
+	glPushMatrix();
+	
+	glTranslatef(120, 2, -190);
+	glRotatef(180, 0, 1, 0);
+	asiento.prisma(1, 15, 3, madera.GLindex);
+
+	glTranslatef(6, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glTranslatef(-12, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glPopMatrix();
+
+
+	//banquita 
+
+	glPushMatrix();
+
+	glTranslatef(100, 2, -190);
+	glRotatef(180, 0, 1, 0);
+	asiento.prisma(1, 15, 3, madera.GLindex);
+
+	glTranslatef(6, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glTranslatef(-12, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glPopMatrix();
+	
+
+	//jardinera 2
+	glPushMatrix();
+	glTranslatef(170, 0.0, -190);
+	glRotatef(-270, 0.0, 1.0, 0.0);
+	glDisable(GL_LIGHTING);
+	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);//maceta8
+	glTranslatef(0.0, 0.0, 15.0);
+	medialuna.cilindro(7.5, 5.0, 30.0, pasto.GLindex, ladrillo.GLindex);
+	glTranslatef(7.5, 0.0, -30);
+	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
+	glBegin(GL_POLYGON);	//Front
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15, 0.0, -15.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15, 5.0, -15.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glBegin(GL_POLYGON);  //Left
+		//glColor3f(1.0,1.0,1.0);
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 0.0, -15.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15.0, 0.0, 0.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-15.0, 5.0, 0.0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
+	glBegin(GL_POLYGON);  //Top
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 5.0, 0.0);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glTranslatef(-7.5, 0.0, 30.0);
+	arbol2.arbol(tree1.GLindex);
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
+	
+
+
+
 
 	glPushMatrix();//Post
 	glTranslatef(45.0, 0.0, 67.0);
@@ -268,6 +772,8 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glEnable(GL_LIGHTING);
 
 
+
+	
 
 	glPushMatrix();
 	glTranslatef(-17.0, 0.0, 65.0);
@@ -302,18 +808,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 
 	glDisable(GL_LIGHTING);
-	glPushMatrix();//Faro2
-	glTranslatef(-25.0, 0.0, 67.0);
-	glColor3fv(gris);
-	posteinf.poste(0.1, 20, 40, 0);
-	glTranslatef(0.0, 20.0, 0.0);
-	glRotatef(90, 1.0, 0.0, 0.0);
-	postesup.poste(0.07, 2.0, 40.0, 0);
-	glTranslatef(0.0, 2.0, 0.0);
-	glColor3fv(amarillo);
-	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
-	glColor3f(1.0, 1.0, 1.0);
-	glPopMatrix();
+
 
 	glPushMatrix();//Post
 	glTranslatef(-45.0, 0.0, 67.0);
@@ -340,38 +835,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 
 
-	glPushMatrix();
-	glTranslatef(-57, 0.0, 30);
-	glDisable(GL_LIGHTING);
-	jardinera1_1.maceta(10.0, 15.0, 41.0, pasto.GLindex, ladrillo.GLindex);//maceta3
-	glTranslatef(7.5, 0.0, 20.5);
-	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(5, 0.0, -14.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(5, 5.0, -14.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Left
-		//glColor3f(1.0,1.0,1.0);
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(5.0, 5.0, -14.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(5.0, 0.0, -14.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 0.0, -41.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, -41.0);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 5.0, -41.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(5.0, 5.0, -14.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glEnable(GL_LIGHTING);
-	glTranslatef(-7.5, 0.0, -20.5);
-	arbol2.arbol(tree.GLindex);
-	glPopMatrix();
+	
 
 	glPushMatrix();
 	glTranslatef(57, 0.0, 30);
@@ -440,109 +904,10 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 
 
-	glPushMatrix();
-	glTranslatef(57, 0.0, -20);
-	glDisable(GL_LIGHTING);
-	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);//maceta7
-	glTranslatef(-7.5, 0.0, -15);
-	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(15, 0.0, -15.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(15, 5.0, -15.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Left
-		//glColor3f(1.0,1.0,1.0);
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(15.0, 5.0, -15.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(15.0, 0.0, -15.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(15.0, 0.0, 0.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(15.0, 5.0, 0.0);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(15.0, 5.0, -15.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(15.0, 5.0, 0.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glEnable(GL_LIGHTING);
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(-30, 0.0, -55);
-	glRotatef(90, 0.0, 1.0, 0.0);
-	glDisable(GL_LIGHTING);
-	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);//maceta7
-	glTranslatef(0.0, 0.0, 15.0);
-	medialuna.cilindro(7.5, 5.0, 30.0, pasto.GLindex, ladrillo.GLindex);
-	glTranslatef(-7.5, 0.0, -30);
-	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(15, 0.0, -15.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(15, 5.0, -15.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Left
-		//glColor3f(1.0,1.0,1.0);
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(15.0, 5.0, -15.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(15.0, 0.0, -15.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(15.0, 0.0, 0.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(15.0, 5.0, 0.0);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(15.0, 5.0, -15.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(15.0, 5.0, 0.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glEnable(GL_LIGHTING);
-	glTranslatef(7.0, 0.0, 30.0);
-	arbol2.arbol(tree1.GLindex);
-	glPopMatrix();
+	
 
 
-	glPushMatrix();
-	glTranslatef(30, 0.0, -55);
-	glRotatef(-90, 0.0, 1.0, 0.0);
-	glDisable(GL_LIGHTING);
-	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);//maceta8
-	glTranslatef(0.0, 0.0, 15.0);
-	medialuna.cilindro(7.5, 5.0, 30.0, pasto.GLindex, ladrillo.GLindex);
-	glTranslatef(7.5, 0.0, -30);
-	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15, 0.0, -15.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15, 5.0, -15.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Left
-		//glColor3f(1.0,1.0,1.0);
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 0.0, -15.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15.0, 0.0, 0.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-15.0, 5.0, 0.0);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 5.0, 0.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glEnable(GL_LIGHTING);
-	glTranslatef(-7.5, 0.0, 30.0);
-	arbol2.arbol(tree1.GLindex);
-	glPopMatrix();
+
 
 
 	glEnable(GL_LIGHTING);
