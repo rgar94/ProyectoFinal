@@ -21,6 +21,9 @@ GLfloat rojo[] = { 1.0,0.0,0.0 };
 GLfloat verde[] = { 0.0,1.0,0.0 };
 
 
+GLfloat alto_estructura = 0.0;
+GLfloat i = 0.0;
+
 
 //Creacion de la Camera
 CCamera objCamera;	//Create objet Camera
@@ -48,6 +51,7 @@ CTexture puesto_azul;
 CTexture puesto_rojo;
 CTexture puesto_amarillo;
 CTexture castillo_negro;
+CTexture carrito;
 
 //Definicion de figuras
 CFiguras sky;
@@ -80,6 +84,7 @@ CFiguras puesto;
 CFiguras patas_asiento;//para las bancas del parque
 CFiguras asiento;
 CFiguras castillo;
+CFiguras montaña_rusa;
 
 
 
@@ -173,6 +178,10 @@ void InitGL(GLvoid)     // Inicializamos parametros
 	castillo_negro.LoadTGA("text/castillo_negro.tga");
 	castillo_negro.BuildGLTexture();
 	castillo_negro.ReleaseImage();
+
+	carrito.LoadTGA("text/carrito.tga");
+	carrito.BuildGLTexture();
+	carrito.ReleaseImage();
 
 	objCamera.Position_Camera(10, 10.5f, 0, 0, 2.5f, 0, 0, 1, 0);
 
@@ -292,6 +301,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glDisable(GL_LIGHTING);
 
 	//Jardinera 1 (Entrada izquierda)
+	
 	glPushMatrix();
 	glTranslatef(-180.0, 0.0, 60.0);
 	glDisable(GL_LIGHTING);
@@ -325,8 +335,9 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glEnable(GL_LIGHTING);
 	glTranslatef(-7.5, 0.0, -20.5);
 	arbol2.arbol(tree.GLindex);
+
 	glPopMatrix();
-	
+
 
 	//Banquitas
 
@@ -360,9 +371,42 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 	//puesto 1 
 	glPushMatrix();
+
+	//cajita
+	glPushMatrix();
 	glTranslatef(-180,0, 0);
 	glRotatef(90, 0, 1, 0);
 	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+
+	//
+	glPushMatrix();
+	glTranslatef(-5, 5, 0);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(5, 5, 0);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//toldo
+	glPushMatrix();
+
+	glTranslatef(0, 10, 0);
+	glRotatef(90, 1, 0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
+	glPopMatrix();
+
+	glPopMatrix();
+
+
+
 	glPopMatrix();
 
 	//puesto 2 
@@ -370,6 +414,32 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glTranslatef(-180, 0, -15);
 	glRotatef(90, 0, 1, 0);
 	puesto.prisma(10, 10, 5, puesto_rojo.GLindex);
+
+	//
+	glPushMatrix();
+	glTranslatef(-5, 5, 0);
+	puesto.poste(0.1, 5, 120, puesto_rojo.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 5, 120, puesto_rojo.GLindex);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(5, 5, 0);
+	puesto.poste(0.1, 5, 120, puesto_rojo.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 5, 120, puesto_rojo.GLindex);
+	glPopMatrix();
+
+	//toldo
+	glPushMatrix();
+
+	glTranslatef(0, 10, 0);
+	glRotatef(90, 1, 0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(5, 0.1, 11, puesto_rojo.GLindex);
+	glPopMatrix();
+
 	glPopMatrix();
 
 
@@ -378,6 +448,32 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glTranslatef(-180, 0, -30);
 	glRotatef(90, 0, 1, 0);
 	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+
+	//
+	glPushMatrix();
+	glTranslatef(-5, 5, 0);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(5, 5, 0);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//toldo
+	glPushMatrix();
+
+	glTranslatef(0, 10, 0);
+	glRotatef(90, 1, 0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
+	glPopMatrix();
+
 	glPopMatrix();
 	glEnable(GL_LIGHTING);
 
@@ -559,7 +655,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glTranslatef(-7.5, 0.0, 30.0);
 	arbol2.arbol(tree1.GLindex);
 	glPopMatrix();
-	glEnable(GL_LIGHTING);
+
 
 	//banquita pegada a la jardinera izquierda
 	glPushMatrix();
@@ -577,8 +673,8 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glPopMatrix();
 
 	//banquita 
-	glPushMatrix();
 	
+	glPushMatrix();
 	glTranslatef(-100, 2, -190);
 	glRotatef(180, 0, 1, 0);
 	asiento.prisma(1, 15, 3, madera.GLindex);
@@ -588,8 +684,9 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 	glTranslatef(-12, -0.5, 0);
 	patas_asiento.prisma(1, 1, 3, madera.GLindex);
-	
+
 	glPopMatrix();
+	glDisable(GL_LIGHTING);
 
 	//jardinera 2
 	glPushMatrix();
@@ -670,7 +767,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glTranslatef(-7.5, 0.0, 30.0);
 	arbol2.arbol(tree1.GLindex);
 	glPopMatrix();
-	glEnable(GL_LIGHTING);
+
 
 
 	//banquita pegada a la jardinera izquierda
@@ -704,6 +801,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 	patas_asiento.prisma(1, 1, 3, madera.GLindex);
 
 	glPopMatrix();
+	glDisable(GL_LIGHTING);
 	
 
 	//jardinera 2
@@ -744,7 +842,62 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glPopMatrix();
 	glEnable(GL_LIGHTING);
 
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+/////////////////////Montaña Rusa/////////////////////
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+
+
+
+
+		//carrito montaña rusa
 	
+		glPushMatrix();
+		glDisable(GL_LIGHTING);
+		glTranslatef(0,2.5, 0);		
+		montaña_rusa.prisma5(4, 6, 4, carrito.GLindex);
+		//asientos
+		glPushMatrix();
+		glTranslatef(-1.5, 0, 0);
+		montaña_rusa.prisma(2, 1, 3, castillo_negro.GLindex);
+
+		glTranslatef(3, 0, 0);
+		montaña_rusa.prisma(2, 1, 3, castillo_negro.GLindex);
+
+
+		glPopMatrix();
+		//parte de enfrente del carrito 
+		glTranslatef(4, -1, 0);
+		montaña_rusa.prisma(2, 2, 4, carrito.GLindex);
+		glTranslatef(0, 2, 0);
+		glRotatef(180,0,1,0);
+		montaña_rusa.triangulo(2,2, 4, carrito.GLindex);
+	
+		glPopMatrix();
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
