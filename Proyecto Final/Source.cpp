@@ -6,9 +6,56 @@
 //		   Ramírez Verduzco Lizet
 //Grupo Teoria: 01 Grupo Laboratorio: 02
 
+
+//para movimiento de tacitas
+float tacitas = 0;
+
 #include "texture.h"
 #include "figuras.h"
 #include "Camera.h"
+//luces
+float angleX = 0.0f;
+float angleY = 0.0f;
+float angleZ = 0.0f;
+float transX = 0.0f;
+float transY = 0.0f;
+float transZ = 0.0f;
+
+float LightAngle = 30.0f;
+
+bool	light = false;		// Luz ON/OFF
+bool	positional = true;
+
+
+int luna_neptuno2 = 0;
+
+GLfloat LightAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f }; 			// Ambient Light Values
+GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };				// Diffuse Light Values
+GLfloat LightSpecular[] = { 1.0, 1.0, 1.0, 1.0 };				// Specular Light Values
+GLfloat LightPosition[] = { 0.0f, 0.0f, 0.0f, 1.0f };			// Light Position
+GLfloat LightPosition1[] = { 0.0f, 0.0f, 1.0f, 0.0f };			// Light Position
+GLfloat LightDirection[] = { 0.0f, 0.0f, -2.0f };			// Light Position
+
+GLfloat mat_ambient[] = { 0.0, 0.0, 0.0, 1.0 };					// Color background
+GLfloat mat_diffuse[] = { 0.0, 1.0, 0.0, 1.0 };					// Object Color main
+GLfloat mat_specular[] = { 0.0, 0.0, 1.0, 1.0 };				// Specular color
+GLfloat mat_shininess[] = { 100.0 };							// 1 to greatest
+
+
+//luces materiales
+GLfloat lamparaDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };			// Diffuse Light Values
+GLfloat lamparaSpecular[] = { 1.0, 1.0, 1.0, 1.0 };				// Specular Light Values
+GLfloat lamparaPosition[] = { 0.0f, 0.0f, 0.0f, 1.0f };			// Light Position
+GLfloat laparaShininess[] = { 100.0 };
+
+
+
+
+//neptuno
+GLfloat LunaNeptuno2Diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };			// Luna
+GLfloat LunaNeptuno2Specular[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat LunaNeptuno2Shininess[] = { 100.0 };
+
 
 //Definicion de colores
 GLfloat blanco[] = { 1.0,1.0,1.0 };
@@ -24,6 +71,22 @@ GLfloat verde[] = { 0.0,1.0,0.0 };
 GLfloat alto_estructura = 0.0;
 GLfloat i = 0.0;
 
+//Animación del recorrido
+float angRot = 0.0;
+float movKitX = 0.0;
+float movKitZ = 0.0;
+float rotKit = 0.0;
+float rotTires = 0.0;
+bool g_fanimacion = false;
+bool g_avanza = false;
+
+bool circuito = false;
+bool recorrido1 = true;
+bool recorrido2 = false;
+bool recorrido3 = false;
+bool recorrido4 = false;
+bool recorrido5 = false;
+bool circuito2 = false;
 
 //Creacion de la Camera
 CCamera objCamera;	//Create objet Camera
@@ -52,6 +115,16 @@ CTexture puesto_rojo;
 CTexture puesto_amarillo;
 CTexture castillo_negro;
 CTexture carrito;
+CTexture comida;
+CTexture juegos;
+CTexture globos;
+CTexture patitos;
+CTexture palomitas;
+CTexture algodon;
+CTexture hamburguesa;
+CTexture puerta;
+CTexture ventana1;
+
 
 //Definicion de figuras
 CFiguras sky;
@@ -86,6 +159,226 @@ CFiguras asiento;
 CFiguras castillo;
 CFiguras montaña_rusa;
 
+CFiguras fig7;
+
+
+
+
+
+//Variables de dibujo y manipulacion
+float posX = 0, posY = 2.5, posZ = -3.5, rotRodIzq = 0, rotRodDer = 0, rotBrazoIzq = 0, rotBrazoDer = 0, rotCabeza = 0;//paso 0
+float giroMonito = 0;
+
+
+
+typedef struct _frame
+{
+	//Variables para GUARDAR Key Frames
+	float posX;		//Variable para PosicionX
+	float posY;		//Variable para PosicionY
+	float posZ;		//Variable para PosicionZ
+	float incX;		//Variable para IncrementoX
+	float incY;		//Variable para IncrementoY
+	float incZ;		//Variable para IncrementoZ
+	float rotRodIzq;
+	float rotInc;
+	float giroMonito;
+	float giroMonitoInc;
+	float movBrazoDer;
+	float movBrazoDerInc;
+
+
+}FRAME;
+
+//NEW//////////////////NEW//////////////////NEW//////////////////NEW////////////////
+static GLuint ciudad_display_list;	//Display List for the Monito
+
+void monito()
+{
+	//glNewList(1, GL_COMPILE);
+	glPushMatrix();//Pecho
+	glScalef(0.5, 0.5, 0.5);
+	fig7.prisma(2.0, 2.0, 1, madera.GLindex);
+
+	glPushMatrix();//Cuello
+	glTranslatef(0, 1.0, 0.0);
+	fig7.poste(0.25, 0.25, 15, 0);
+	glPushMatrix();//Cabeza
+	glTranslatef(0, 1.0, 0);
+	fig7.esfera(0.75, 15, 15, 0);
+	glPopMatrix();
+	glPopMatrix();
+
+	glPushMatrix(); //Brazo derecho-->
+	glTranslatef(1.25, 0.65, 0);
+	fig7.esfera(0.5, 12, 12, 0);
+	glPushMatrix();
+	glTranslatef(0.25, 0, 0);
+//	glRotatef(movBrazoDer, 0.0, 0.0, 1.0);
+	glRotatef(-45, 0, 1, 0);
+	glTranslatef(0.75, 0, 0);
+	fig7.prisma(0.7, 1.5, 0.7, 0);
+	glPopMatrix();
+	glPopMatrix();
+
+	glPushMatrix(); //Brazo izquierdo <--
+	glTranslatef(-1.25, 0.65, 0);
+	fig7.esfera(0.5, 12, 12, 0);
+	glPushMatrix();
+	glTranslatef(-0.25, 0, 0);
+	glRotatef(45, 0, 1, 0);
+	glRotatef(25, 0, 0, 1);
+	glRotatef(25, 1, 0, 0);
+	glTranslatef(-0.75, 0, 0);
+	fig7.prisma(0.7, 1.5, 0.7, 0);
+	glPopMatrix();
+	glPopMatrix();
+
+	glPushMatrix();//Cintura
+	glColor3f(0, 0, 1);
+	glTranslatef(0, -1.5, 0);
+	fig7.prisma(1, 2, 1, 0);
+
+	glPushMatrix(); //Pie Derecho -->
+	glTranslatef(0.75, -0.5, 0);
+	glRotatef(-15, 1, 0, 0);
+	glTranslatef(0, -0.5, 0);
+	fig7.prisma(1.0, 0.5, 1, 0);
+
+	glPushMatrix();
+	glTranslatef(0, -0.5, 0);
+	glRotatef(15, 1, 0, 0);
+	glTranslatef(0, -0.75, 0);
+	fig7.prisma(1.5, 0.5, 1, 0);
+
+	glPushMatrix();
+	glTranslatef(0, -0.75, 0.3);
+	fig7.prisma(0.2, 1.2, 1.5, 0);
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+
+
+	glPushMatrix(); //Pie Izquierdo -->
+	glTranslatef(-0.75, -0.5, 0);
+	glRotatef(-5, 1, 0, 0);
+	glTranslatef(0, -0.5, 0);
+	fig7.prisma(1.0, 0.5, 1, 0);
+
+	glPushMatrix();
+	glTranslatef(0, -0.5, 0);
+	glRotatef(15 + rotRodIzq, 1, 0, 0);
+	glTranslatef(0, -0.75, 0);
+	fig7.prisma(1.5, 0.5, 1, 0);
+
+	glPushMatrix();
+	glTranslatef(0, -0.75, 0.3);
+	fig7.prisma(0.2, 1.2, 1.5, 0);
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+
+
+	glPopMatrix();
+
+
+	glColor3f(1, 1, 1);
+	glPopMatrix();
+	//glEndList();
+}
+
+
+//recorrido
+/*void animacion()
+{
+	/*fig3.text_izq -= 0.01;
+	fig3.text_der -= 0.01;
+	if (fig3.text_izq < -1)
+		fig3.text_izq = 0;
+	if (fig3.text_der < 0)
+		fig3.text_der = 1;
+
+	//Movimiento del coche
+	if (g_fanimacion)
+	{
+		if (g_avanza)
+		{
+			movKitZ += 1.0;
+			rotTires -= 10;
+			if (movKitZ > 130)
+				g_avanza = false;
+		}
+		else
+		{
+			movKitZ -= 1.0;
+			rotTires += 10;
+			if (movKitZ < 0)
+				g_avanza = true;
+		}
+	}
+	
+	if (circuito) // comienza maquina
+	{
+		if (recorrido1) // estado A
+		{
+			movKitZ++;
+			if (movKitZ > 120) // transicion a B
+			{
+				recorrido1 = false;
+				recorrido2 = true;
+			}
+		}
+		if (recorrido2) // estado B
+		{
+			rotKit = 90;
+			movKitX++;
+			if (movKitX > 125) // transicion a C
+			{
+				recorrido2 = false;
+				recorrido3 = true;
+
+			}
+		}
+
+//modificar
+		if (recorrido3) // estado C
+		{
+			rotKit = 205 + tanf(125.0 / 310);
+			movKitZ--;
+			movKitX = movKitX - 0.4;
+			if (movKitZ < -155) // transicion a D
+			{
+				recorrido3 = false;
+				recorrido5 = true;
+			}
+		}
+		//fin
+		if (recorrido4) // estado D
+		{
+			rotKit = 135;
+			movKitX--;
+			if (movKitX < 0) // transicion a E
+			{
+				recorrido4 = false;
+				recorrido5 = true;
+			}
+		}
+
+		if (recorrido5) // estado E
+		{
+			rotKit = 0;
+			movKitZ++;
+			if (movKitZ > 0) // transicion a A
+			{
+				recorrido5 = false;
+				recorrido1 = true;
+			}
+		}
+	}
+
+
+	*/
+
 
 
 
@@ -104,8 +397,24 @@ void InitGL(GLvoid)     // Inicializamos parametros
 	glDepthFunc(GL_LEQUAL);								// Tipo de Depth Testing a realizar
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
+	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);				// Setup The Ambient Light
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);				// Setup The Diffuse Light
+	glLightfv(GL_LIGHT1, GL_SPECULAR, LightSpecular);				// Setup The Diffuse Light
+
+	glEnable(GL_LIGHT1);							// Enable Light One
+
 	glEnable(GL_AUTO_NORMAL);
 	glEnable(GL_NORMALIZE);
+
+	//luz de la lampara
+	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);				// Setup The Ambient Light
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);				// Setup The Diffuse Light
+	glLightfv(GL_LIGHT1, GL_SPECULAR, LightSpecular);				// Setup The Diffuse Light
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT1);							// Enable Light One
+
+
 
 	text1.LoadBMP("text/01.bmp");
 	text1.BuildGLTexture();
@@ -183,6 +492,43 @@ void InitGL(GLvoid)     // Inicializamos parametros
 	carrito.BuildGLTexture();
 	carrito.ReleaseImage();
 
+	comida.LoadTGA("text/comida.tga");
+	comida.BuildGLTexture();
+	comida.ReleaseImage();
+
+	juegos.LoadTGA("text/juegos.tga");
+	juegos.BuildGLTexture();
+	juegos.ReleaseImage();
+
+	globos.LoadTGA("text/globos.tga");
+	globos.BuildGLTexture();
+	globos.ReleaseImage();
+
+	patitos.LoadTGA("text/patitos.tga");
+	patitos.BuildGLTexture();
+	patitos.ReleaseImage();
+
+	palomitas.LoadTGA("text/palomitas.tga");
+	palomitas.BuildGLTexture();
+	palomitas.ReleaseImage();
+
+	algodon.LoadTGA("text/algodon.tga");
+	algodon.BuildGLTexture();
+	algodon.ReleaseImage();
+
+
+	hamburguesa.LoadTGA("text/hamburguesa.tga");
+	hamburguesa.BuildGLTexture();
+	hamburguesa.ReleaseImage();
+
+	puerta.LoadTGA("text/puerta.tga");
+	puerta.BuildGLTexture();
+	puerta.ReleaseImage();
+
+	ventana1.LoadTGA("text/ventana1.tga");
+	ventana1.BuildGLTexture();
+	ventana1.ReleaseImage();
+
 	objCamera.Position_Camera(10, 10.5f, 0, 0, 2.5f, 0, 0, 1, 0);
 
 }
@@ -209,7 +555,47 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 	glPushMatrix();
 	glTranslatef(0, 200, 0);
-	sky.skybox(400.0, 400.0, 400.0, text1.GLindex);
+	sky.skybox(500.0, 500, 500.0, text1.GLindex);
+
+	if (positional)
+	{
+		glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);
+
+		glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, LightDirection);
+	}
+	else
+		glLightfv(GL_LIGHT1, GL_POSITION, LightPosition1);
+
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0, 1.0, 0.0);
+
+	if (!light)
+	{
+		glDisable(GL_LIGHTING);
+
+	}
+	else
+	{
+		glEnable(GL_LIGHTING);
+	}
+
+	glPushMatrix();
+	glTranslatef(transX, transY, transZ);
+	glRotatef(angleX, 1.0f, 0.0f, 0.0f);
+	glRotatef(angleZ, 0.0f, 0.0f, 1.0f);
+	glRotatef(angleY, 0.0f, 1.0f, 0.0f);
+	glColor3f(1.0, 1.0, 1.0);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	glutSolidCube(400);
+	//prisma();
+
+	glPopMatrix();
+
+
 
 	glPopMatrix();
 	glEnable(GL_LIGHTING);
@@ -229,6 +615,16 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glTranslatef(0, 0, 150);
 	piso.prisma(0.5, 400.0, 100.0, suelo_estacionamiento.GLindex);
 	glPopMatrix();
+
+	//caminito del parque
+	glPushMatrix();
+	glTranslatef(0, 0, 40);
+	piso.prisma(0.6, 100, 120, castillo_negro.GLindex);
+
+	glTranslatef(0, 0, -70);
+	piso.prisma(0.6, 350, 20, castillo_negro.GLindex);
+	glPopMatrix();
+
 
 	//Entrada al parque
 	glPushMatrix();
@@ -253,14 +649,93 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glPopMatrix();
 	glPopMatrix();
 
+
+
+
+
+	
+
 	/////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////
 	//DIBUJO DE BANQUITAS, PUESTOS Y DEMAS, LADO IZQUIERDO//
 	///////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////
 
-	glPushMatrix();//Faro1 
-	glTranslatef(-180.0, 0.0, 90.0);
+	//botes de basura
+	//bote 1
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glTranslatef(-190.0, 0.0, 35.0);
+	glColor3fv(azul);
+	correo1.poste(0.1, 1.0, 40, 0);
+	glTranslatef(2.0, 0.0, 0.0);
+	correo2.poste(0.1, 1.0, 40, 0);
+	glTranslatef(0.0, 0.0, 2.0);
+	correo3.poste(0.1, 1.0, 40, 0);
+	glTranslatef(-2.0, 0.0, 0.0);
+	correo4.poste(0.1, 1.0, 40, 0);
+	glTranslatef(1.0, 4.0, -1.0);
+	glColor3f(1.0, 1.0, 1.0);
+	correo5.prisma(6.0, 3.0, 3.0, uspost.GLindex);
+	glTranslatef(0.0, 3.0, 1.0);
+	glRotatef(-90, 1.0, 0.0, 0.0);
+	glColor3fv(azul);
+	correo6.cilindro(1.5, 2.5, 40, 0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
+	//bote 2
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glTranslatef(-190.0, 0.0, -170.0);
+	glColor3fv(azul);
+	correo1.poste(0.1, 1.0, 40, 0);
+	glTranslatef(2.0, 0.0, 0.0);
+	correo2.poste(0.1, 1.0, 40, 0);
+	glTranslatef(0.0, 0.0, 2.0);
+	correo3.poste(0.1, 1.0, 40, 0);
+	glTranslatef(-2.0, 0.0, 0.0);
+	correo4.poste(0.1, 1.0, 40, 0);
+	glTranslatef(1.0, 4.0, -1.0);
+	glColor3f(1.0, 1.0, 1.0);
+	correo5.prisma(6.0, 3.0, 3.0, uspost.GLindex);
+	glTranslatef(0.0, 3.0, 1.0);
+	glRotatef(-90, 1.0, 0.0, 0.0);
+	glColor3fv(azul);
+	correo6.cilindro(1.5, 2.5, 40, 0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+
+
+
+
+
+	glPushMatrix();//Faro1 pegado a la jardinera
+	glTranslatef(-180.0, 0.0, 30.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+
+	glDisable(GL_LIGHTING);//el no necesita sombra ya que funciona como sol
+	
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glEnable(GL_LIGHTING); //Habilita el sombreado para los demás planetas
+
+	glPopMatrix();
+
+	glDisable(GL_LIGHTING);
+
+
+	//glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro 2
+	glTranslatef(-180.0, 0.0, 10.0);
 	glColor3fv(gris);
 	posteinf.poste(0.1, 20, 40, 0);
 	glTranslatef(0.0, 20.0, 0.0);
@@ -272,8 +747,8 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glColor3f(1.0, 1.0, 1.0);
 	glPopMatrix();
 
-	glPushMatrix();//Faro2 
-	glTranslatef(-180.0, 0.0, 10.0);
+	glPushMatrix();//Faro3
+	glTranslatef(-180.0, 0.0, -55.0);
 	glColor3fv(gris);
 	posteinf.poste(0.1, 20, 40, 0);
 	glTranslatef(0.0, 20.0, 0.0);
@@ -286,8 +761,36 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glPopMatrix();
 	glDisable(GL_LIGHTING);
 
-	glPushMatrix();//Faro3
-	glTranslatef(-180.0, 0.0, -40.0);
+	glPushMatrix();//Faro 4
+	glTranslatef(-180.0, 0.0, -75.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro 5
+	glTranslatef(-180.0, 0.0, -140.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro 6
+	glTranslatef(-180.0, 0.0, -160.0);
 	glColor3fv(gris);
 	posteinf.poste(0.1, 20, 40, 0);
 	glTranslatef(0.0, 20.0, 0.0);
@@ -301,7 +804,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glDisable(GL_LIGHTING);
 
 	//Jardinera 1 (Entrada izquierda)
-	
+
 	glPushMatrix();
 	glTranslatef(-180.0, 0.0, 60.0);
 	glDisable(GL_LIGHTING);
@@ -345,18 +848,23 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glPushMatrix();
 	glTranslatef(-180, 2, 20);
 	glRotatef(90, 0, 1, 0);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, LunaNeptuno2Diffuse);//para aplicar los materiales y funciona como glcolor
+	glMaterialfv(GL_FRONT, GL_SPECULAR, LunaNeptuno2Diffuse);
+	glMaterialfv(GL_FRONT, GL_SHININESS, LunaNeptuno2Diffuse);
+
+	glEnable(GL_LIGHTING); //Habilita el sombreado para los demás planetas
 	asiento.prisma(1, 15, 3, madera.GLindex);
 
-	glTranslatef(6,-0.5, 0);
+	glTranslatef(6, -0.5, 0);
 	patas_asiento.prisma(1, 1, 3, madera.GLindex);
 
-	glTranslatef(-12,-0.5, 0);
+	glTranslatef(-12, -0.5, 0);
 	patas_asiento.prisma(1, 1, 3, madera.GLindex);
 	glPopMatrix();
 
-	//banquita pegada al puesto amarillo lado izquierdo
+	//banquita pegada al puesto lado izquierdo
 	glPushMatrix();
-	glTranslatef(-180, 2, -50);
+	glTranslatef(-180, 2, -65);
 	glRotatef(90, 0, 1, 0);
 	asiento.prisma(1, 15, 3, madera.GLindex);
 
@@ -367,16 +875,70 @@ void display(void)   // Creamos la funcion donde se dibuja
 	patas_asiento.prisma(1, 1, 3, madera.GLindex);
 	glPopMatrix();
 
-	//puestos
+	//banquita ultima banquita
+	glPushMatrix();
+	glTranslatef(-180, 2, -150);
+	glRotatef(90, 0, 1, 0);
+	asiento.prisma(1, 15, 3, madera.GLindex);
 
+	glTranslatef(6, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+
+	glTranslatef(-12, -0.5, 0);
+	patas_asiento.prisma(1, 1, 3, madera.GLindex);
+	glPopMatrix();
+
+
+
+	//////////////////////
+	//PUESTOS DE COMIDA//
+	/////////////////////
+
+	//presentación área de comida
+
+	//pilar 1
+	glPushMatrix();
+	glTranslatef(-190, 0, 10);
+	entrada.prisma(40, 2, 2, madera.GLindex);
+
+	//pilar 2
+	glTranslatef(0, 0, -60);
+	entrada.prisma(40, 2, 2, madera.GLindex);
+
+	//anuncio
+	glTranslatef(0, 22, 30);
+	glRotatef(90, 0, 1, 0);
+	glRotatef(90, 0, 1, 0);
+	entrada.prisma(4, 2, 62, madera.GLindex);
+
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1);
+	glTranslatef(-1, 0, 0);
+	entrada.prisma(15, 0.05, 30,comida.GLindex);
+	glDisable(GL_ALPHA_TEST);
+	glPopMatrix();
+
+	/////////////////
+	glDisable(GL_LIGHTING);//el no necesita sombra ya que funciona como sol
 	//puesto 1 
 	glPushMatrix();
 
 	//cajita
 	glPushMatrix();
-	glTranslatef(-180,0, 0);
+	glTranslatef(-180, 0, 0);
 	glRotatef(90, 0, 1, 0);
 	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+
+	//fondo de acuerdo a la comida (palomitas)
+	glPushMatrix();
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1);
+	glTranslatef(0, 9, -2.5);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(8, 0.1, 10, palomitas.GLindex);
+	glDisable(GL_ALPHA_TEST);
+	glPopMatrix();
+
 
 	//
 	glPushMatrix();
@@ -394,13 +956,14 @@ void display(void)   // Creamos la funcion donde se dibuja
 	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
 	glPopMatrix();
 
-	//toldo
+	// toldo
 	glPushMatrix();
 
 	glTranslatef(0, 10, 0);
 	glRotatef(90, 1, 0, 0);
 	glRotatef(90, 0, 1, 0);
 	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
+	glPopMatrix();
 	glPopMatrix();
 
 	glPopMatrix();
@@ -415,31 +978,41 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glRotatef(90, 0, 1, 0);
 	puesto.prisma(10, 10, 5, puesto_rojo.GLindex);
 
+	//fondo de acuerdo al juego (globos)
+	glPushMatrix();
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1);
+	glTranslatef(0, 9, -2.5);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(8, 0.1, 10, algodon.GLindex);
+	glDisable(GL_ALPHA_TEST);
+	glPopMatrix();
+
+
 	//
 	glPushMatrix();
 	glTranslatef(-5, 5, 0);
-	puesto.poste(0.1, 5, 120, puesto_rojo.GLindex);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
 	glTranslatef(0, 0, -2.2);
-	puesto.poste(0.1, 5, 120, puesto_rojo.GLindex);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
 	glPopMatrix();
 
 	//
 	glPushMatrix();
 	glTranslatef(5, 5, 0);
-	puesto.poste(0.1, 5, 120, puesto_rojo.GLindex);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
 	glTranslatef(0, 0, -2.2);
-	puesto.poste(0.1, 5, 120, puesto_rojo.GLindex);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
 	glPopMatrix();
 
-	//toldo
+	// toldo
 	glPushMatrix();
 
 	glTranslatef(0, 10, 0);
 	glRotatef(90, 1, 0, 0);
 	glRotatef(90, 0, 1, 0);
-	puesto.prisma(5, 0.1, 11, puesto_rojo.GLindex);
+	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
 	glPopMatrix();
-
 	glPopMatrix();
 
 
@@ -449,6 +1022,16 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glRotatef(90, 0, 1, 0);
 	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
 
+	//fondo de acuerdo al juego (globos)
+	glPushMatrix();
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1);
+	glTranslatef(0, 9, -2.5);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(8, 0.1, 10, hamburguesa.GLindex);
+	glDisable(GL_ALPHA_TEST);
+	glPopMatrix();
+
 	//
 	glPushMatrix();
 	glTranslatef(-5, 5, 0);
@@ -465,7 +1048,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
 	glPopMatrix();
 
-	//toldo
+	// toldo
 	glPushMatrix();
 
 	glTranslatef(0, 10, 0);
@@ -473,8 +1056,241 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glRotatef(90, 0, 1, 0);
 	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
 	glPopMatrix();
-
 	glPopMatrix();
+
+	//puesto 4
+	glPushMatrix();
+	glTranslatef(-180, 0, -45);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+
+	//fondo de acuerdo al juego (globos)
+	glPushMatrix();
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1);
+	glTranslatef(0, 9, -2.5);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(8, 0.1, 10, hamburguesa.GLindex);
+	glDisable(GL_ALPHA_TEST);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(-5, 5, 0);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(5, 5, 0);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 5, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	// toldo
+	glPushMatrix();
+
+	glTranslatef(0, 10, 0);
+	glRotatef(90, 1, 0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
+	glPopMatrix();
+	glPopMatrix();
+
+	//////////////////////
+	//juegos de destreza//
+	/////////////////////
+
+	//presentación juegos de destreza
+
+	//pilar 1
+	glPushMatrix();
+	glTranslatef(-190, 0, -80);
+	entrada.prisma(40, 2, 2, castillo_negro.GLindex);
+	
+	//pilar 2
+	glTranslatef(0, 0, -60);
+	entrada.prisma(40, 2, 2, castillo_negro.GLindex);
+
+	//anuncio
+	glTranslatef(0, 22, 30);
+	glRotatef(90, 0, 1, 0);
+	glRotatef(90, 0, 1, 0);
+	entrada.prisma(4, 2, 62, madera.GLindex);
+
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1);
+	glTranslatef(-1, 0, 0);
+	entrada.prisma(15, 0.05, 30, juegos.GLindex);
+	glDisable(GL_ALPHA_TEST);
+	glPopMatrix();
+
+	/////////////////
+
+	//puesto 5
+	glPushMatrix();
+	glTranslatef(-180, 0, -85);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+
+
+	//fondo de acuerdo al juego (globos)
+	glPushMatrix();
+	glTranslatef(0, 9, -2.5);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(8, 0.1, 10, globos.GLindex);
+	glPopMatrix();
+
+
+	//
+	glPushMatrix();
+	glTranslatef(-5, 5, 0);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(5, 5, 0);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//toldo
+	glPushMatrix();
+	glTranslatef(0, 13, 0);
+	glRotatef(90, 1, 0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
+	glPopMatrix();
+	glPopMatrix();
+
+	//puesto 6
+	glPushMatrix();
+	glTranslatef(-180, 0, -100);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+
+
+	//fondo de acuerdo al juego (globos)
+	glPushMatrix();
+	glTranslatef(0, 9, -2.5);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(8, 0.1, 10, patitos.GLindex);
+	glPopMatrix();
+
+
+	//
+	glPushMatrix();
+	glTranslatef(-5, 5, 0);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(5, 5, 0);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//toldo
+	glPushMatrix();
+	glTranslatef(0, 13, 0);
+	glRotatef(90, 1, 0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
+	glPopMatrix();
+	glPopMatrix();
+
+
+
+	//puesto 7
+	glPushMatrix();
+	glTranslatef(-180, 0, -115);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+
+
+	//fondo de acuerdo al juego (globos)
+	glPushMatrix();
+	glTranslatef(0, 9, -2.5);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(8, 0.1, 10, globos.GLindex);
+	glPopMatrix();
+
+
+	//
+	glPushMatrix();
+	glTranslatef(-5, 5, 0);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(5, 5, 0);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//toldo
+	glPushMatrix();
+	glTranslatef(0, 13, 0);
+	glRotatef(90, 1, 0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
+	glPopMatrix();
+	glPopMatrix();
+
+	//puesto 8
+	glPushMatrix();
+	glTranslatef(-180, 0, -130);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(10, 10, 5, puesto_azul.GLindex);
+
+	//fondo de acuerdo al juego (globos)
+	glPushMatrix();
+	glTranslatef(0, 9, -2.5);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(8,0.1, 10, patitos.GLindex);
+	glPopMatrix();
+
+
+	//
+	glPushMatrix();
+	glTranslatef(-5, 5, 0);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//
+	glPushMatrix();
+	glTranslatef(5, 5, 0);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glTranslatef(0, 0, -2.2);
+	puesto.poste(0.1, 8, 120, puesto_azul.GLindex);
+	glPopMatrix();
+
+	//toldo
+	glPushMatrix();
+	glTranslatef(0, 13, 0);
+	glRotatef(90, 1, 0, 0);
+	glRotatef(90, 0, 1, 0);
+	puesto.prisma(5, 0.1, 11, puesto_azul.GLindex);
+	glPopMatrix();
+	glPopMatrix();
+
 	glEnable(GL_LIGHTING);
 
 
@@ -520,28 +1336,53 @@ void display(void)   // Creamos la funcion donde se dibuja
 	arbol2.arbol(tree.GLindex);
 	glPopMatrix();
 
-	//Banquitas
 
-	//banquita pegada a la jardinera izquierda
+
+	/////////////
+	//Castillo//
+	////////////
 	glPushMatrix();
-	glTranslatef(180, 2, 20);
-	glRotatef(90, 0, 1, 0);
-	asiento.prisma(1, 15, 3, madera.GLindex);
-
-	glTranslatef(6, -0.5, 0);
-	patas_asiento.prisma(1, 1, 3, madera.GLindex);
-
-	glTranslatef(-12, -0.5, 0);
-	patas_asiento.prisma(1, 1, 3, madera.GLindex);
-	glPopMatrix();
-
-
-
-	//Castillo
-	glPushMatrix();
-	glTranslatef(180, 0, -45);
+	glTranslatef(180, 0, -30);
 	glRotatef(90, 0, 1, 0);
 	castillo.prisma(130, 100 , 40, castillo_negro.GLindex);
+
+	//puerta
+	glPushMatrix();
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1);
+	glTranslatef(0, 8, -20);
+	glRotatef(90, 0, 1, 0);
+	castillo.prisma(15, 0.1, 15, puerta.GLindex);
+
+	//ventanas
+	//parte de abajo
+	//izq a der
+	glPushMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, 22, 0);
+	castillo.prisma(10, 0.1, 10, ventana1.GLindex);
+	glTranslatef(0, 0, 35);
+	castillo.prisma(10, 0.1, 10, ventana1.GLindex);
+	glTranslatef(0, 0, -70);
+	castillo.prisma(10, 0.1, 10, ventana1.GLindex);
+	glPopMatrix();
+
+	//parte de arriba der a izq
+	glPushMatrix();
+	glTranslatef(0, 42, 0);
+	castillo.prisma(10, 0.1, 10, ventana1.GLindex);
+	glTranslatef(0, 0, 35);
+	castillo.prisma(10, 0.1, 10, ventana1.GLindex);
+	glTranslatef(0, 0, -70);
+	castillo.prisma(10, 0.1, 10, ventana1.GLindex);
+
+	glPopMatrix();
+
+	glDisable(GL_ALPHA_TEST);
+	glPopMatrix();
+	glPopMatrix();
+
 	//torre 1 centro
 	glTranslatef(0,65,0);
 	castillo.poste(8.0, 45.0, 120.0,castillo_negro.GLindex);
@@ -556,7 +1397,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 	//picos de las torres
 	glPushMatrix();
 	//torre 2 izquierda
-	glTranslatef(180, 95, -5);
+	glTranslatef(180, 95, 10);
 	glColor3f(0,0,0);
 	castillo.cono(30,8, 120, castillo_negro.GLindex);
 	//torre 3 derecha
@@ -586,7 +1427,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 
 	glPushMatrix();//Faro2 pegado al castillo
-	glTranslatef(180.0, 0.0, 10.0);
+	glTranslatef(180.0, 0.0, 30.0);
 	glColor3fv(gris);
 	posteinf.poste(0.1, 20, 40, 0);
 	glTranslatef(0.0, 20.0, 0.0);
@@ -600,7 +1441,7 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glDisable(GL_LIGHTING);
 
 	glPushMatrix();//Faro3
-	glTranslatef(180.0, 0.0, -120.0);
+	glTranslatef(180.0, 0.0, -100.0);
 	glColor3fv(gris);
 	posteinf.poste(0.1, 20, 40, 0);
 	glTranslatef(0.0, 20.0, 0.0);
@@ -613,15 +1454,164 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glPopMatrix();
 	glDisable(GL_LIGHTING);
 
+
+
+
+	//////////
+	// Tacitas
+	//////////
+
+	glPushMatrix();
+	glTranslatef(180, 5, -115);
+	//base de las tacitas
+	glPushMatrix();
+	glTranslatef(0, 5, 20);
+	glPopMatrix();
+	glRotatef(tacitas, 0.0, 1.0, 0.0);	// la estructura gira sobre su eje
+	jardinera1_1.vuelta8(6, 8, 100, 12);
+	//base pegada al piso
+	glTranslatef(0, -5, 0);
+	jardinera1_1.poste(0.5, 5, 120, castillo_negro.GLindex);
+	//TUBOS QUE UNEN LA BASE DEL PISO CON LA BASE DE LAS TACITAS
+	glPushMatrix();
+	glTranslatef(6, 5, 0);
+	glRotatef(90, 0, 0, 1);
+	jardinera1_1.poste(0.3, 12, 120, madera.GLindex);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0, 5, -5);
+	glRotatef(90, 0, 0, 1);
+	glRotatef(90, 1, 0, 0);
+	jardinera1_1.poste(0.3, 12, 120, madera.GLindex);
+	//cabinitas
+	glPushMatrix();
+	glTranslatef(2.8, -3, 0);
+	glRotatef(90, 0, 0, 1);
+	glRotatef(270, 1, 0, 0);
+	jardinera1_1.mediaesfera(2, 12, 120, castillo_negro.GLindex);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(2.8, 12, 0);
+	glRotatef(90, 0, 0, 1);
+	glRotatef(270, 1, 0, 0);
+	jardinera1_1.mediaesfera(2, 12, 120, castillo_negro.GLindex);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(2.8, 5, -6);
+	glRotatef(90, 0, 0, 1);
+	glRotatef(270, 1, 0, 0);
+	jardinera1_1.mediaesfera(2, 12, 120, castillo_negro.GLindex);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(2.8, 5, 6);
+	glRotatef(90, 0, 0, 1);
+	glRotatef(270, 1, 0, 0);
+	jardinera1_1.mediaesfera(2, 12, 120, castillo_negro.GLindex);
+	glPopMatrix();
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+	//fin tacitas
+
 ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////
 //////////////DIBUJO JARDINERAS DEL FONDO//////////////
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+	//faros
+
+
+	glPushMatrix();//Faro 2
+	glTranslatef(-90.0, 0.0, -190.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro 1
+	glTranslatef(-130.0, 0.0, -190.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro 3
+	glTranslatef(-20.0, 0.0, -190.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro 4
+	glTranslatef(20.0, 0.0, -190.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro 5
+	glTranslatef(90.0, 0.0, -190.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();//Faro 6
+	glTranslatef(130.0, 0.0, -190.0);
+	glColor3fv(gris);
+	posteinf.poste(0.1, 20, 40, 0);
+	glTranslatef(0.0, 20.0, 0.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	postesup.poste(0.07, 2.0, 40.0, 0);
+	glTranslatef(0.0, 2.0, 0.0);
+	glColor3fv(amarillo);
+	lamp.mediaesfera(1.0, 30.0, 30.0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+
 	//Jardinera pegada al lado izquierdo
 	glPushMatrix();
-	glTranslatef(-170, 0.0, -190);
+	glTranslatef(170, 0.0, -190);
 	glRotatef(-90, 0.0, 1.0, 0.0);
 	glDisable(GL_LIGHTING);
 	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);
@@ -727,7 +1717,49 @@ void display(void)   // Creamos la funcion donde se dibuja
 	glEnable(GL_LIGHTING);
 
 
+	//bote 1
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glTranslatef(-5.0, 0.0, -190.0);
+	glColor3fv(azul);
+	correo1.poste(0.1, 1.0, 40, 0);
+	glTranslatef(2.0, 0.0, 0.0);
+	correo2.poste(0.1, 1.0, 40, 0);
+	glTranslatef(0.0, 0.0, 2.0);
+	correo3.poste(0.1, 1.0, 40, 0);
+	glTranslatef(-2.0, 0.0, 0.0);
+	correo4.poste(0.1, 1.0, 40, 0);
+	glTranslatef(1.0, 4.0, -1.0);
+	glColor3f(1.0, 1.0, 1.0);
+	correo5.prisma(6.0, 3.0, 3.0, uspost.GLindex);
+	glTranslatef(0.0, 3.0, 1.0);
+	glRotatef(-90, 1.0, 0.0, 0.0);
+	glColor3fv(azul);
+	correo6.cilindro(1.5, 2.5, 40, 0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
 
+	//bote 2
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glTranslatef(5.0, 0.0, -190.0);
+	glColor3fv(azul);
+	correo1.poste(0.1, 1.0, 40, 0);
+	glTranslatef(2.0, 0.0, 0.0);
+	correo2.poste(0.1, 1.0, 40, 0);
+	glTranslatef(0.0, 0.0, 2.0);
+	correo3.poste(0.1, 1.0, 40, 0);
+	glTranslatef(-2.0, 0.0, 0.0);
+	correo4.poste(0.1, 1.0, 40, 0);
+	glTranslatef(1.0, 4.0, -1.0);
+	glColor3f(1.0, 1.0, 1.0);
+	correo5.prisma(6.0, 3.0, 3.0, uspost.GLindex);
+	glTranslatef(0.0, 3.0, 1.0);
+	glRotatef(-90, 1.0, 0.0, 0.0);
+	glColor3fv(azul);
+	correo6.cilindro(1.5, 2.5, 40, 0, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
 
 
 	//segundo bloque
@@ -968,196 +2000,27 @@ void display(void)   // Creamos la funcion donde se dibuja
 		glPopMatrix();
 
 		glPopMatrix();//fin de los carritos
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	glPushMatrix();//Post
-	glTranslatef(45.0, 0.0, 67.0);
-	glColor3fv(azul);
-	correo1.poste(0.1, 1.0, 40, 0);
-	glTranslatef(2.0, 0.0, 0.0);
-	correo2.poste(0.1, 1.0, 40, 0);
-	glTranslatef(0.0, 0.0, 2.0);
-	correo3.poste(0.1, 1.0, 40, 0);
-	glTranslatef(-2.0, 0.0, 0.0);
-	correo4.poste(0.1, 1.0, 40, 0);
-	glTranslatef(1.0, 4.0, -1.0);
-	glColor3f(1.0, 1.0, 1.0);
-	correo5.prisma(6.0, 3.0, 3.0, uspost.GLindex);
-	glTranslatef(0.0, 3.0, 1.0);
-	glRotatef(-90, 1.0, 0.0, 0.0);
-	glColor3fv(azul);
-	correo6.cilindro(1.5, 2.5, 40, 0, 0);
-	glColor3f(1.0, 1.0, 1.0);
 	glPopMatrix();
 
-	glEnable(GL_LIGHTING);
 
 
 
-	
-
+	//////////////////////
+	/////////////////////
+	/////MONITO//////////
+	///////////////////
+	/////////////////
 	glPushMatrix();
-	glTranslatef(-17.0, 0.0, 65.0);
-	glDisable(GL_LIGHTING);
-	jardinera1_1.maceta(10.0, 10.0, 7.5, pasto.GLindex, ladrillo.GLindex);//maceta2
-	glTranslatef(-5.0, 0.0, 0.0);
-	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 3.75);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.5, 0.0, 3.75);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.5, 5, 3.75);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5, 3.75);
-	glEnd();
-	glBegin(GL_POLYGON);  //Left
-		//glColor3f(1.0,1.0,1.0);
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.5, 5, 3.75);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.5, 0.0, 3.75);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 0.0, -3.75);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5, -3.75);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 5, 3.75);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.5, 5, 3.75);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5, -3.75);
-	glEnd();
-	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
+	glColor3f(1, 1, 1);
+	//glScalef(0.5, 0.5, 0.5);
+	//monito();
+	glCallList(ciudad_display_list);
+	glTranslatef(posX, posY, posZ);
+	glRotatef(giroMonito, 0, 1, 0);
+	monito();
+	glDisable(GL_COLOR_MATERIAL);
 	glPopMatrix();
-
-
-	glDisable(GL_LIGHTING);
-
-
-	glPushMatrix();//Post
-	glTranslatef(-45.0, 0.0, 67.0);
-	glColor3fv(azul);
-	correo1.poste(0.1, 1.0, 40, 0);
-	glTranslatef(2.0, 0.0, 0.0);
-	correo2.poste(0.1, 1.0, 40, 0);
-	glTranslatef(0.0, 0.0, 2.0);
-	correo3.poste(0.1, 1.0, 40, 0);
-	glTranslatef(-2.0, 0.0, 0.0);
-	correo4.poste(0.1, 1.0, 40, 0);
-	glTranslatef(1.0, 4.0, -1.0);
-	glColor3f(1.0, 1.0, 1.0);
-	correo5.prisma(6.0, 3.0, 3.0, uspost.GLindex);
-	glTranslatef(0.0, 3.0, 1.0);
-	glRotatef(-90, 1.0, 0.0, 0.0);
-	glColor3fv(azul);
-	correo6.cilindro(1.5, 2.5, 40, 0, 0);
-	glColor3f(1.0, 1.0, 1.0);
-	glPopMatrix();
-
-	glEnable(GL_LIGHTING);
-
-
-
-
-	
-
-	glPushMatrix();
-	glTranslatef(57, 0.0, 30);
-	glDisable(GL_LIGHTING);
-	jardinera1_1.maceta(10.0, 15.0, 41.0, pasto.GLindex, ladrillo.GLindex);//maceta4
-	glTranslatef(-7.5, 0.0, 20.5);
-	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-5, 0.0, -14.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-5, 5.0, -14.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Left
-		//glColor3f(1.0,1.0,1.0);
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-5.0, 5.0, -14.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-5.0, 0.0, -14.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 0.0, -41.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, -41.0);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 5.0, -41.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-5.0, 5.0, -14.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glEnable(GL_LIGHTING);
-	glTranslatef(7.5, 0.0, -20.5);
-	arbol2.arbol(tree.GLindex);
-	glPopMatrix();
-
-
-	glPushMatrix();
-	glTranslatef(-57, 0.0, -20);
-	glDisable(GL_LIGHTING);
-	jardinera1_1.maceta(10.0, 15.0, 30.0, pasto.GLindex, ladrillo.GLindex);//maceta5
-	glTranslatef(7.5, 0.0, -15);
-	glBindTexture(GL_TEXTURE_2D, ladrillo.GLindex);   // choose the texture to use.
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15, 0.0, -15.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15, 5.0, -15.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glBegin(GL_POLYGON);  //Left
-		//glColor3f(1.0,1.0,1.0);
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 0.0, -15.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-15.0, 0.0, 0.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-15.0, 5.0, 0.0);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, pasto.GLindex);
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-15.0, 5.0, -15.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-15.0, 5.0, 0.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.0, 5.0, 0.0);
-	glEnd();
-	glEnable(GL_LIGHTING);
-	glPopMatrix();
-
-
-
-	
-
-
-
-
-
-	glEnable(GL_LIGHTING);
-	glPopMatrix();
-
-
 	
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
@@ -1167,10 +2030,21 @@ void display(void)   // Creamos la funcion donde se dibuja
 
 }
 
+
+
 void animacion()
 {
 
-	glutPostRedisplay();
+	{	glutPostRedisplay();
+
+		tacitas--;
+	}
+
+	{
+		
+
+	
+	}
 }
 
 void reshape(int width, int height)   // Creamos funcion Reshape
@@ -1215,6 +2089,50 @@ void keyboard(unsigned char key, int x, int y)  // Funcion de teclas del teclado
 	case 'd':
 	case 'D':
 		objCamera.Strafe_Camera(CAMERASPEED + 0.5);
+		break;
+
+	case 'l':   //Activamos/desactivamos luz
+	case 'L':
+		light = !light;
+		break;
+
+	case 'p':   //Activamos/desactivamos luz
+	case 'P':
+		positional = !positional;
+		break;
+
+	case 'n':
+		giroMonito++;
+		//printf("%f \n", giroMonito);
+		break;
+
+	case 'N':
+		giroMonito--;
+		//printf("%f \n", giroMonito);
+		break;
+
+	case 'y':
+	case 'Y':
+		posZ++;
+		printf("%f \n", posZ);
+		break;
+
+	case 'g':
+	case 'G':
+		posX--;
+		printf("%f \n", posX);
+		break;
+
+	case 'h':
+	case 'H':
+		posZ--;
+		printf("%f \n", posZ);
+		break;
+
+	case 'j':
+	case 'J':
+		posX++;
+		printf("%f \n", posX);
 		break;
 
 	case 27:        // Cuando Esc es presionado...
