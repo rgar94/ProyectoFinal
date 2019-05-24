@@ -38,4 +38,9 @@ class CFiguras
 	void skybox2 (float altura, float largo, float profundidad, GLuint text);
 	void torus(GLfloat radioM, GLfloat radiom, int meridianos, int paralelos);
 	void triangulo(float altura, float largo, float profundidad, GLuint text);
+	void CFiguras::vuelta(GLfloat radioM, GLfloat radiom, int meridianos, int paralelos);
+	void CFiguras::vuelta4(GLfloat radioM, GLfloat radiom, int meridianos, int paralelos);
+	void CFiguras::vuelta8(GLfloat radioM, GLfloat radiom, int meridianos, int paralelos);
+	void CFiguras::prisma6(float altura, float largo, float profundidad, GLuint text);  //Funcion creacion prisma
+	void CFiguras::cartel(GLuint text);
 };
